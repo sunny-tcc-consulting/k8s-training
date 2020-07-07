@@ -58,5 +58,5 @@ kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
 kubectl get pods --all-namespaces
 ```
 
-![Get pod result](get_pod "Get pod result")
+![Get pod result](get_pod.png "Get pod result")
 
