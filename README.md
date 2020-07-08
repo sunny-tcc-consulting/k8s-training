@@ -36,6 +36,8 @@ sudo sed -i '/swap/d'  /etc/fstab
 ```bash
 sudo kubeadm init
 ```
+![Kube Init Result](kubeadm_init.png "Kube init result")
+
 Run and save the environment variable
 ```
   mkdir -p $HOME/.kube
@@ -60,3 +62,68 @@ kubectl get pods --all-namespaces
 
 ![Get pod result](get_pod.png "Get pod result")
 
+### Install ingress
+```
+
+kubectl create -f https://haproxy-ingress.github.io/resources/haproxy-ingress.yaml
+
+kubectl label node k8s-master role=ingress-controller
+
+cat <<EOF | kubectl -n kubernetes-dashboard apply -f -
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: dashboard
+  annotations:
+    ingress.kubernetes.io/secure-backends: "true"
+spec:
+  tls:
+  - hosts:
+      - 192.168.87.245.nip.io
+  rules:
+  - host: 192.168.87.245.nip.io
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 443
+EOF
+
+
+```
+### Create a simple admin user
+```
+cat <<EOF | kubectl -n kubernetes-dashboard apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+cat <<EOF | kubectl -n kubernetes-dashboard apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+```
+### Get Token for login
+```
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+```
+### Install a dashboard
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+
+
+```
