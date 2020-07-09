@@ -1,3 +1,5 @@
+[Link install k8s](/INSTALL_K8S.md)
+
 ### Letting iptables see bridged traffic
 
 ```bash
