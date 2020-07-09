@@ -242,3 +242,8 @@ spec:
           servicePort: 443
 EOF
 ```
+
+
+### TD: install nexus as repository for docker and 
+### TD: install git
+### TD: install authentication system
