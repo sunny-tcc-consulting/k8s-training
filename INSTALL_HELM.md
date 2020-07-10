@@ -16,13 +16,6 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/down
 
 ### install prometheus
 ```bash
-kubectl create namespace monitoring
-helm install prometheus stable/prometheus --namespace monitoring --dry-run
-helm install prometheus stable/prometheus --namespace monitoring
-```
-
-### install prometheus
-```bash
 helm install prometheus  stable/prometheus-operator --namespace monitoring
 ```
 
